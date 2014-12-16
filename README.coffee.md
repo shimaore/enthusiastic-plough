@@ -23,7 +23,7 @@ It queries the CDR database in batches, and distributes each item into a target 
         push: (@doc) ->
           delete doc._rev
           v = doc.variables
-          doc._id = "#{v.ccnq_account} #{v.start_stamp} #{v.ccnq_from_e164} #{v.ccnq_to_e164} #{v.billsec}"
+          doc._id = "#{v.start_stamp} #{v.ccnq_account} #{v.ccnq_from_e164} #{v.ccnq_to_e164} #{v.billsec}"
           @queue.push doc
           if @queue.length > limit
             @flush()
