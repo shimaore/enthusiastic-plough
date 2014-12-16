@@ -43,7 +43,7 @@ It queries the CDR database in batches, and distributes each item into a target 
             for response, i in responses
               do (response,i) =>
                 if response.ok is yes
-                  console.log "Saved #{response.id} for #{@name}"
+                  # console.log "Saved #{response.id} for #{@name}"
                   my_queue[i] = null
                   successes++
                 else
@@ -55,6 +55,7 @@ Requeue any failed record.
             console.log "Only #{successes} successes out of #{my_queue.length} in this batch."
             my_queue = my_queue.filter (x) -> x?
             @queue = @queue.concat my_queue
+            console.log "Next round will start with #{@queue.length} left over."
             @only_one_at_a_time = false
 
       source = new PouchDB cfg.source, ajax: cfg.ajax
