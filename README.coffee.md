@@ -77,7 +77,6 @@ Requeue any failed record.
           target.push doc, seq
         else
           console.log "Skipped #{doc._id}"
-        return
       .on 'error', (error) ->
         console.log "changes error: #{error}"
       .on 'complete', ->
