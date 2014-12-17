@@ -13,8 +13,8 @@ It queries the CDR database in batches, and distributes each item into a target 
       year = cfg.year
       console.log "#{pkg.name} #{pkg.version} starting for year #{year}."
 
-      limit = 200
-      max_size = 500
+      limit = cfg.limit ? 200
+      max_size = cfg.max_size ? 500
 
       class Saver
         constructor: (@name) ->
