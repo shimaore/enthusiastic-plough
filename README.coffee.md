@@ -50,6 +50,7 @@ It queries the CDR database in batches, and distributes each item into a target 
                   successes++
                 else
                   console.log "Oops, #{response.id} failed: #{response}, requeuing it."
+            return
 
 Requeue any failed record.
 
@@ -76,6 +77,7 @@ Requeue any failed record.
           target.push doc, seq
         else
           console.log "Skipped #{doc._id}"
+        return
       .on 'error', (error) ->
         console.log "changes error: #{error}"
       .on 'complete', ->
@@ -83,6 +85,7 @@ Requeue any failed record.
         for k,saver of savers
           do (saver) ->
             saver.flush()
+        return
 
     pkg = require './package.json'
     cfg = require './config.json'
