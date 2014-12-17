@@ -14,6 +14,7 @@ It queries the CDR database in batches, and distributes each item into a target 
       console.log "#{pkg.name} #{pkg.version} starting for year #{year}."
 
       limit = 200
+      max_size = 500
 
       class Saver
         constructor: (@name) ->
@@ -32,8 +33,8 @@ It queries the CDR database in batches, and distributes each item into a target 
         flush: (seq) ->
           return if @only_one_at_a_time
           @only_one_at_a_time = true
-          my_queue = @queue
-          @queue = []
+          my_queue = @queue[0...max_size]
+          @queue = @queue[max_size...]
           successes = 0
           console.log "Submitting #{my_queue.length} entries at seq #{seq ? 'unknown'}."
           @db.bulkDocs my_queue
