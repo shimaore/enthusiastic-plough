@@ -32,17 +32,17 @@ It queries the CDR database in batches, and distributes each item into a target 
           return if @only_one_at_a_time
           @only_one_at_a_time = true
           my_queue = @queue
+          @queue = []
           successes = 0
           console.log "Submitting #{my_queue.length} entries."
-          @queue = []
           @db.bulkDocs my_queue
-          .catch (error) =>
+          .catch (error) ->
             console.log "Oops, #{error} submitting queue."
             []
-          .then (responses) =>
+          .then (responses) ->
             for response, i in responses
-              do (response,i) =>
-                if response.ok is yes
+              do (response,i) ->
+                if response.ok
                   # console.log "Saved #{response.id} for #{@name}"
                   my_queue[i] = null
                   successes++
