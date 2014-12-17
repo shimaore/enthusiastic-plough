@@ -27,6 +27,7 @@ It queries the CDR database in batches, and distributes each item into a target 
           @queue.push doc
           if @queue.length > limit
             @flush seq
+          return
 
         flush: (seq) ->
           return if @only_one_at_a_time
@@ -57,6 +58,8 @@ Requeue any failed record.
             @queue = @queue.concat my_queue
             console.log "Next round will start with #{@queue.length} left over."
             @only_one_at_a_time = false
+            return
+          return
 
       source = new PouchDB cfg.source, ajax: cfg.ajax
       savers = {}
