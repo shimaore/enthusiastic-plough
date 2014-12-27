@@ -23,7 +23,6 @@ It queries the CDR database in batches, and distributes each item into a target 
           limit: limit
           since: since
           include_docs: true
-      console.log "options = #{JSON.stringify options}"
       request.getAsync options
       .catch (error) ->
         console.log "getAsync failed with #{error}"
