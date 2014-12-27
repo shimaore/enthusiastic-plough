@@ -65,6 +65,7 @@ It queries the CDR database in batches, and distributes each item into a target 
     Promise = require 'bluebird'
     PouchDB = require 'pouchdb'
     request = Promise.promisifyAll (require 'request').defaults cfg.ajax
+    fs = Promise.promisifyAll require 'fs'
     assert = require 'assert'
 
     class SaverError extends Error
