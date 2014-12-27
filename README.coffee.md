@@ -33,8 +33,8 @@ It queries the CDR database in batches, and distributes each item into a target 
               console.log "Skipped #{doc._id}"
 
         Promise.all savers.map (s) -> s.flush()
-        .then ->
-          since = seq
+      .then ->
+        seq
 
     pkg = require './package.json'
     cfg = require './config.json'
@@ -67,4 +67,6 @@ It queries the CDR database in batches, and distributes each item into a target 
     since = cfg.since
     year = cfg.year
     while true
-      since = run since, year
+      run since, year
+      .then (seq) ->
+        since = seq
