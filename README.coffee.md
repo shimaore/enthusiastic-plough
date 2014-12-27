@@ -52,10 +52,16 @@ It queries the CDR database in batches, and distributes each item into a target 
 
         Promise.all observers
       .then ->
+        cfg.since = since
+        content = JSON.stringify cfg, null, '  '
+        fs.writeFileAsync config_file, content, encoding:'utf8'
+      .then ->
         run since, year
 
     pkg = require './package.json'
-    cfg = require './config.json'
+    path = require 'path'
+    config_file = path.join (path.dirname module.filename), 'config.json'
+    cfg = require config_file
     Promise = require 'bluebird'
     PouchDB = require 'pouchdb'
     request = Promise.promisifyAll (require 'request').defaults cfg.ajax
