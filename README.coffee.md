@@ -31,7 +31,7 @@ It queries the CDR database in batches, and distributes each item into a target 
         console.log "getAsync failed with #{error}"
         throw error
       .then ({results}) ->
-        assert results?, 'Missing results.'
+        assert results?, 'Missing results in #{JSON.stringify arguments}.'
         assert results.length > 0, 'No results.'
         console.log "Splitting #{results.length} results."
         savers = {}
@@ -89,9 +89,7 @@ It queries the CDR database in batches, and distributes each item into a target 
           for response in responses when not response.ok
             throw new SaverError "Failed for #{response}"
 
-    since = cfg.since
-    year = cfg.year
-    run since, year
+    run cfg.since, cfg.year
     .catch (error) ->
       console.log "Stopped with #{error}"
       throw error
