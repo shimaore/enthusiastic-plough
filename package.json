@@ -11,6 +11,6 @@
   "private": true,
   "dependencies": {
     "pouchdb": "^3.2.0",
-    "superagent-as-promised": "^1.0.1"
+    "request": "^2.51.0"
   }
 }

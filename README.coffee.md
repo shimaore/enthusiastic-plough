@@ -12,14 +12,16 @@ It queries the CDR database in batches, and distributes each item into a target 
 
       console.log "#{pkg.name} #{pkg.version} starting for year #{year} at sequence #{since}."
 
-      limit = cfg.limit ? 200
+      limit = cfg.limit ? 500
 
       request
-      .get "#{cfg.source}/_changes"
-      .query
-        limit: limit
-        since: since
-        include_docs: true
+      .getAsync
+        url: "#{cfg.source}/_changes"
+        json: true
+        qs:
+          limit: limit
+          since: since
+          include_docs: true
       .then ({results}) ->
         savers = {}
         for change in results
@@ -39,7 +41,7 @@ It queries the CDR database in batches, and distributes each item into a target 
     pkg = require './package.json'
     cfg = require './config.json'
     PouchDB = require 'pouchdb'
-    request = require 'superagent-as-promised'
+    request = Promise.promisifyAll (require 'request').defaults cfg.ajax
 
     class SaverError extends Error
 
