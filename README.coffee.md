@@ -38,6 +38,7 @@ It queries the CDR database in batches, and distributes each item into a target 
         for change in results
           do (change) ->
             {seq,doc} = change
+            since = seq
             assert seq?, 'Missing seq'
             assert doc?, 'Missing doc'
             target_month = doc?.variables?.start_stamp?.substr(0,7)
@@ -54,7 +55,7 @@ It queries the CDR database in batches, and distributes each item into a target 
 
         Promise.all observers
       .then ->
-        seq
+        run since, year
 
     pkg = require './package.json'
     cfg = require './config.json'
@@ -90,10 +91,7 @@ It queries the CDR database in batches, and distributes each item into a target 
 
     since = cfg.since
     year = cfg.year
-    while true
-      run since, year
-      .then (seq) ->
-        since = seq
-      .catch (error) ->
-        console.log "Stopped with #{error}"
-        throw error
+    run since, year
+    .catch (error) ->
+      console.log "Stopped with #{error}"
+      throw error
