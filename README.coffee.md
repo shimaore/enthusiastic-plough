@@ -34,7 +34,12 @@ It queries the CDR database in batches, and distributes each item into a target 
             else
               console.log "Skipped #{doc._id}"
 
-        Promise.all savers.map (s) -> s.flush()
+        observers = []
+        for name,saver of savers
+          do (saver) ->
+            observers.push saver.flush()
+
+        Promise.all observers
       .then ->
         seq
 
