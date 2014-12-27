@@ -16,14 +16,15 @@ It queries the CDR database in batches, and distributes each item into a target 
 
       console.log "#{pkg.name} #{pkg.version} starting for year #{year} at sequence #{since} for up to #{limit}."
 
-      request
-      .getAsync
+      options =
         url: "#{cfg.source}/_changes"
         json: true
         qs:
           limit: limit
           since: since
           include_docs: true
+      console.log "options = #{JSON.stringify options}"
+      request.getAsync options
       .then ({results}) ->
         assert results?, 'Missing results.'
         assert results.length > 0, 'No results.'
