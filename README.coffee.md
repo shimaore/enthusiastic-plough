@@ -40,6 +40,7 @@ It queries the CDR database in batches, and distributes each item into a target 
 
     pkg = require './package.json'
     cfg = require './config.json'
+    Promise = require 'bluebird'
     PouchDB = require 'pouchdb'
     request = Promise.promisifyAll (require 'request').defaults cfg.ajax
 
