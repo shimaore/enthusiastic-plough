@@ -10,9 +10,9 @@ How does it work?
 
 It queries the CDR database in batches, and distributes each item into a target bin (database) for a given year.
 
-      console.log "#{pkg.name} #{pkg.version} starting for year #{year} at sequence #{since}."
-
       limit = cfg.limit ? 500
+
+      console.log "#{pkg.name} #{pkg.version} starting for year #{year} at sequence #{since} for up to #{limit}."
 
       request
       .getAsync
@@ -73,3 +73,6 @@ It queries the CDR database in batches, and distributes each item into a target 
       run since, year
       .then (seq) ->
         since = seq
+      .catch (error) ->
+        console.log "Stopped with #{error}"
+        throw error
