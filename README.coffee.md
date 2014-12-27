@@ -30,8 +30,7 @@ It queries the CDR database in batches, and distributes each item into a target 
       .catch (error) ->
         console.log "getAsync failed with #{error}"
         throw error
-      .then ({body}) ->
-        results = body.results
+      .then ([dummy,{results}]) ->
         assert results?, "Missing results in #{JSON.stringify arguments}"
         assert results.length > 0, 'No results.'
         console.log "Splitting #{results.length} results."
