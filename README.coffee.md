@@ -23,6 +23,8 @@ It queries the CDR database in batches, and distributes each item into a target 
           limit: limit
           since: since
           include_docs: true
+      for k,v of cfg.ajax
+        options[k] = v
       console.log "options = #{JSON.stringify options}"
       request.getAsync options
       .catch (error) ->
