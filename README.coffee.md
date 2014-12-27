@@ -26,6 +26,8 @@ It queries the CDR database in batches, and distributes each item into a target 
           include_docs: true
       .then ({results}) ->
         assert results?, 'Missing results.'
+        assert results.length > 0, 'No results.'
+        console.log "Splitting #{results.length} results."
         savers = {}
         for change in results
           do (change) ->
