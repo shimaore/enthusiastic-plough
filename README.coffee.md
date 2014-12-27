@@ -7,6 +7,8 @@ How does it work?
 =================
 
     run = (since,year) ->
+      assert since?, 'since is required'
+      assert year?, 'year is required'
 
 It queries the CDR database in batches, and distributes each item into a target bin (database) for a given year.
 
@@ -23,14 +25,17 @@ It queries the CDR database in batches, and distributes each item into a target 
           since: since
           include_docs: true
       .then ({results}) ->
+        assert results?, 'Missing results.'
         savers = {}
         for change in results
           do (change) ->
             {seq,doc} = change
+            assert seq?, 'Missing seq'
+            assert doc?, 'Missing doc'
             target_month = doc?.variables?.start_stamp?.substr(0,7)
             if target_month? and target_month.substr(0,4) is year
               target = savers[target_month] ?= new Saver target_month
-              target.push doc, seq
+              target.push doc
             else
               console.log "Skipped #{doc._id}"
 
@@ -48,15 +53,18 @@ It queries the CDR database in batches, and distributes each item into a target 
     Promise = require 'bluebird'
     PouchDB = require 'pouchdb'
     request = Promise.promisifyAll (require 'request').defaults cfg.ajax
+    assert = require 'assert'
 
     class SaverError extends Error
 
     class Saver
       constructor: (@name) ->
+        assert @name?, 'Missing @name'
         @db = new PouchDB "#{cfg.targets}/cdrs-#{@name}", ajax: cfg.ajax
         @queue = []
 
       push: (doc) ->
+        assert doc?, 'Missing doc'
         delete doc._rev
         v = doc.variables
         doc._id = "#{v.start_stamp} #{v.ccnq_account} #{v.ccnq_from_e164} #{v.ccnq_to_e164} #{v.billsec}"
