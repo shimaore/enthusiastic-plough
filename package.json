@@ -12,6 +12,9 @@
   "dependencies": {
     "bluebird": "^2.4.2",
     "pouchdb": "^3.2.0",
-    "request": "^2.51.0"
+    "superagent-as-promised": "^2.0.0"
+  },
+  "devDependencies": {
+    "coffee-script": "^1.9.0"
   }
 }

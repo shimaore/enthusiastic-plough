@@ -16,18 +16,16 @@ It queries the CDR database in batches, and distributes each item into a target 
 
       console.log "#{pkg.name} #{pkg.version} starting for year #{year} at sequence #{since} for up to #{limit}."
 
-      options =
-        url: "#{cfg.source}/_changes"
-        json: true
-        qs:
-          limit: limit
-          since: since
-          include_docs: true
-      request.getAsync options
+      agent.get "#{cfg.source}/_changes"
+      .accept 'json'
+      .query
+        limit: limit
+        since: since
+        include_docs: true
       .catch (error) ->
-        console.log "getAsync failed with #{error}"
+        console.log "get failed with #{error}"
         throw error
-      .then ([dummy,{results}]) ->
+      .then ({body:{results}}) ->
         assert results?, "Missing results in #{JSON.stringify arguments}"
         assert results.length > 0, 'No results.'
         console.log "Splitting #{results.length} results."
@@ -39,6 +37,9 @@ It queries the CDR database in batches, and distributes each item into a target 
             assert seq?, 'Missing seq'
             assert doc?, 'Missing doc'
             target_month = doc?.variables?.start_stamp?.substr(0,7)
+
+Note: `target_month` might also be absent for deleted records (`change.deleted is true`).
+
             if target_month? and target_month.substr(0,4) is year
               target = savers[target_month] ?= new Saver target_month
               target.push doc
@@ -52,9 +53,18 @@ It queries the CDR database in batches, and distributes each item into a target 
 
         Promise.all observers
       .then ->
-        cfg.since = since
-        content = JSON.stringify cfg, null, '  '
-        fs.writeFileAsync config_file, content, encoding:'utf8'
+        agent.get since_url
+        .accept 'json'
+        .agent agent
+      .catch (error) ->
+        console.log "#{since_id}: #{error}"
+        body:
+          _id: since_id
+      .then ({body:doc}) ->
+        doc.since = since
+        doc.year = year
+        agent.put since_url
+        .send doc
       .then ->
         run since, year
 
@@ -64,7 +74,8 @@ It queries the CDR database in batches, and distributes each item into a target 
     cfg = require config_file
     Promise = require 'bluebird'
     PouchDB = require 'pouchdb'
-    request = Promise.promisifyAll (require 'request').defaults cfg.ajax
+    request = require 'superagent-as-promised'
+    agent = request.agent ca:cfg.ca
     fs = Promise.promisifyAll require 'fs'
     assert = require 'assert'
 
@@ -73,7 +84,10 @@ It queries the CDR database in batches, and distributes each item into a target 
     class Saver
       constructor: (@name) ->
         assert @name?, 'Missing @name'
-        @db = new PouchDB "#{cfg.targets}/cdrs-#{@name}", ajax: cfg.ajax
+        @db = new PouchDB "#{cfg.targets}/cdrs-#{@name}",
+          ajax:
+            ca: cfg.ca
+            timeout: cfg.timeout
         @queue = []
 
       push: (doc) ->
@@ -87,13 +101,23 @@ It queries the CDR database in batches, and distributes each item into a target 
       flush: ->
         my_queue = @queue
         delete @queue
-        console.log "Submitting #{my_queue.length} entries."
+        console.log "#{@name}: Submitting #{my_queue.length} entries."
         @db.bulkDocs my_queue
         .then (responses) =>
           for response in responses when not response.ok
             throw new SaverError "Failed for #{response}"
 
-    run cfg.since, cfg.year
+    since_id = "#{pkg.name}.since"
+    since_url = "#{cfg.source}/_local/#{since_id}"
+    agent.get since_url
+    .accept 'json'
+    .catch (error) ->
+      console.log "#{since_id}: #{error}"
+      body:
+        since: 1
+        year: (new Date()).getFullYear().toString()
+    .then ({body:{since,year}}) ->
+      run since, year
     .catch (error) ->
       console.log "Stopped with #{error}"
       throw error
