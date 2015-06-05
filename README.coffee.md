@@ -65,6 +65,8 @@ Note: `target_month` might also be absent for deleted records (`change.deleted i
         doc.year = year
         agent.put since_url
         .send doc
+      .catch (error) ->
+        console.log "#{since_id}: #{error}"
       .then ->
         run since, year
 
