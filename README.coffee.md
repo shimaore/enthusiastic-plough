@@ -16,6 +16,8 @@ It queries the CDR database in batches, and distributes each item into a target 
 
       console.log "#{pkg.name} #{pkg.version} starting for year #{year} at sequence #{since} for up to #{limit}."
 
+      should_continue = true
+
       agent.get "#{cfg.source}/_changes"
       .accept 'json'
       .query
@@ -27,6 +29,7 @@ It queries the CDR database in batches, and distributes each item into a target 
         throw error
       .then ({body:{results}}) ->
         assert results?, "Missing results in #{JSON.stringify arguments}"
+        should_continue = results.length > 0
         assert results.length > 0, 'No results.'
         console.log "Splitting #{results.length} results."
         savers = {}
@@ -68,7 +71,7 @@ Note: `target_month` might also be absent for deleted records (`change.deleted i
       .catch (error) ->
         console.log "#{since_id}: #{error}"
       .then ->
-        run since, year
+        run since, year if should_continue
 
     pkg = require './package.json'
     path = require 'path'
