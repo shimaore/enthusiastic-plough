@@ -79,7 +79,7 @@ Note: `target_month` might also be absent for deleted records (`change.deleted i
     cfg = require config_file
     Promise = require 'bluebird'
     PouchDB = require 'pouchdb'
-    request = require 'superagent-as-promised'
+    request = (require 'superagent-as-promised') require 'superagent'
     agent = request.agent ca:cfg.ca
     fs = Promise.promisifyAll require 'fs'
     assert = require 'assert'
