@@ -28,7 +28,7 @@ It queries the CDR database in batches, and distributes each item into a target 
         console.log "get failed with #{error}"
         throw error
       .then ({body:{results}}) ->
-        assert results?, "Missing results in #{JSON.stringify arguments}"
+        assert results?, "Missing results"
         should_continue = results.length > 0
         assert results.length > 0, 'No results.'
         console.log "Splitting #{results.length} results."
