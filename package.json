@@ -10,11 +10,11 @@
   "license": "none",
   "private": true,
   "dependencies": {
-    "bluebird": "^2.4.2",
-    "pouchdb": "^3.2.0",
-    "superagent-as-promised": "^2.0.0"
+    "bluebird": "^3.3.5",
+    "pouchdb": "^5.3.2",
+    "superagent-as-promised": "^4.0.0"
   },
   "devDependencies": {
-    "coffee-script": "^1.9.0"
+    "coffee-script": "^1.10.0"
   }
 }
