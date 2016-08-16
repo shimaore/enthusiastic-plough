@@ -20,14 +20,14 @@ It queries the CDR database in batches, and distributes each item into a target 
 
       should_continue = true
 
-      {results} = yield request
+      {body:{results}} = yield request
         .get "#{cfg.source}/_changes"
         .accept 'json'
+        .timeout cfg.timeout
         .query
           limit: limit
           since: since
           include_docs: true
-        .timeout cfg.timeout
 
       assert results?, "Missing results"
       should_continue = results.length > 0
@@ -53,7 +53,7 @@ Note: `target_month` might also be absent for deleted records (`change.deleted i
       for name,saver of savers
         yield saver.flush()
 
-      doc = yield request
+      {body:doc} = yield request
         .get since_url
         .accept 'json'
         .catch (error) ->
@@ -106,7 +106,7 @@ Note: `target_month` might also be absent for deleted records (`change.deleted i
     main = seem ->
       since_id = "#{pkg.name}.since"
       since_url = "#{cfg.source}/_local/#{since_id}"
-      {since,year} = yield request
+      {body:{since,year}} = yield request
         .get since_url
         .accept 'json'
         .catch (error) ->
