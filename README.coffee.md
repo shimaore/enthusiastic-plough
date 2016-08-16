@@ -70,6 +70,8 @@ Note: `target_month` might also be absent for deleted records (`change.deleted i
     path = require 'path'
     config_file = path.join (path.dirname module.filename), 'config.json'
     cfg = require config_file
+    since_id = "#{pkg.name}.since"
+    since_url = "#{cfg.source}/_local/#{since_id}"
     PouchDB = require 'pouchdb'
     request = (require 'superagent-as-promised') require 'superagent'
     assert = require 'assert'
@@ -104,8 +106,6 @@ Note: `target_month` might also be absent for deleted records (`change.deleted i
         throw new SaverError "Failed #{count} responses" if count > 0
 
     main = seem ->
-      since_id = "#{pkg.name}.since"
-      since_url = "#{cfg.source}/_local/#{since_id}"
       {body:{since,year}} = yield request
         .get since_url
         .accept 'json'
