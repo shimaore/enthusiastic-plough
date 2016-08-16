@@ -28,9 +28,6 @@ It queries the CDR database in batches, and distributes each item into a target 
           since: since
           include_docs: true
         .timeout cfg.timeout
-        .catch (error) ->
-          console.error "get failed with #{error}"
-          {}
 
       assert results?, "Missing results"
       should_continue = results.length > 0
@@ -67,8 +64,6 @@ Note: `target_month` might also be absent for deleted records (`change.deleted i
       yield request
         .put since_url
         .send doc
-        .catch (error) ->
-          console.error "#{since_id}: #{error}"
       yield run since, year if should_continue
 
     pkg = require './package.json'
