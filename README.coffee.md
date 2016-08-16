@@ -116,6 +116,14 @@ Note: `target_month` might also be absent for deleted records (`change.deleted i
       year ?= (new Date()).getFullYear().toString()
       yield run since, year
 
-    main()
-    .catch (error) ->
-      console.error "Stopped with #{error}"
+    sleep = (timeout) ->
+      new Promise (accept,reject) ->
+        setTimeout accept, timeout
+
+    do seem ->
+      while true
+        yield main()
+          .catch (error) ->
+            console.error "Stopped with #{error}"
+        console.error "Waiting 10s"
+        yield sleep 10000
