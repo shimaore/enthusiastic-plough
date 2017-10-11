@@ -65,6 +65,7 @@ Note: `target_month` might also be absent for deleted records (`change.deleted i
         .put since_url
         .send doc
       yield run since, year if should_continue
+      return
 
     pkg = require './package.json'
     path = require 'path'
@@ -104,6 +105,7 @@ Note: `target_month` might also be absent for deleted records (`change.deleted i
           console.error "Failed for #{response}"
           count++
         throw new SaverError "Failed #{count} responses" if count > 0
+        return
 
     main = seem ->
       {body:{since,year}} = yield request
@@ -115,9 +117,10 @@ Note: `target_month` might also be absent for deleted records (`change.deleted i
       since ?= 1
       year ?= (new Date()).getFullYear().toString()
       yield run since, year
+      return
 
     sleep = (timeout) ->
-      new Promise (accept,reject) ->
+      new Promise (accept) ->
         setTimeout accept, timeout
 
     do seem ->
@@ -127,3 +130,4 @@ Note: `target_month` might also be absent for deleted records (`change.deleted i
             console.error "Stopped with #{error}"
         console.error "Waiting 10s"
         yield sleep 10000
+        return
