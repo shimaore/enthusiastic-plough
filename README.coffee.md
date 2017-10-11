@@ -48,7 +48,7 @@ Note: `target_month` might also be absent for deleted records (`change.deleted i
             target = savers[target_month] ?= new Saver target_month
             target.push doc
           else
-            console.log "Skipped #{doc._id}"
+            console.log "Skipped #{doc._id}, target_month = #{target_month}"
 
       for name,saver of savers
         yield saver.flush()
@@ -73,7 +73,7 @@ Note: `target_month` might also be absent for deleted records (`change.deleted i
     since_id = "#{pkg.name}.since"
     since_url = "#{cfg.source}/_local/#{since_id}"
     PouchDB = require 'pouchdb'
-    request = (require 'superagent-as-promised') require 'superagent'
+    request = require 'superagent'
     assert = require 'assert'
 
     class SaverError extends Error
@@ -111,7 +111,7 @@ Note: `target_month` might also be absent for deleted records (`change.deleted i
         .accept 'json'
         .catch (error) ->
           console.log "#{since_url}: #{error}"
-          {}
+          body: {}
       since ?= 1
       year ?= (new Date()).getFullYear().toString()
       yield run since, year
