@@ -58,7 +58,7 @@ Note: `target_month` might also be absent for deleted records (`change.deleted i
         .accept 'json'
         .catch (error) ->
           console.error "#{since_id}: #{error}"
-          _id: since_id
+          body: _id: since_id
       doc.since = since
       doc.year = year
       yield request
